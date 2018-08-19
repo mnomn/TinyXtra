@@ -11,6 +11,11 @@ ISR (WDT_vect) {
   wdt_disable();  // disable watchdog
 }  // end of WDT_vect
 
+ISR(PCINT0_vect) {
+  TinyXtra::interrupt = true;
+}
+
+volatile bool TinyXtra::interrupt = false;
 
 TinyXtra::TinyXtra(){
   wdt_reset();  
@@ -34,3 +39,10 @@ void TinyXtra::sleep_8s() {
   sleep_cpu ();          // sleep                
   sleep_disable ();      // precaution
 }
+
+void TinyXtra::setupInterrupt0() {
+  GIMSK = 0b00100000;    // turns on pin change interrupts
+  PCMSK = 0b00010001;    // turn on interrupts on pins PB0
+  sei();                 // enables interrupts
+}
+
