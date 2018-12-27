@@ -21,11 +21,16 @@ Digispark SoftSerial
 class TinyXtra {
 public:
     TinyXtra();
+    // Sleep forever, or when interrupt received.
+    void sleep();
+    // Sleep for 8 sec, longest possible. Loop in application to sleep longer.
     void sleep_8s();
+
     // Enable pin change interrupt on pin 0 - 5.
     // Interrupt set flag TinyXtra::interrupt
     void setupInterrupt(int pin);
-    void disableAdc();
+
+    void disableAdc();// Save power
     void enableAdc();
 
     // Debug serial print at 2400 baud, Requires that board is in 8 MHZ

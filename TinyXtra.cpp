@@ -27,6 +27,11 @@ TinyXtra::TinyXtra(){
   set_sleep_mode (SLEEP_MODE_PWR_DOWN);
 }
 
+void TinyXtra::sleep() {
+  sleep_enable ();
+  sleep_cpu ();
+}
+
 void TinyXtra::sleep_8s() {
   noInterrupts ();       // timed sequence coming up
   // pat the dog
@@ -41,7 +46,7 @@ void TinyXtra::sleep_8s() {
 
   sleep_enable ();       // ready to sleep
   interrupts ();         // interrupts are required now
-  sleep_cpu ();          // sleep                
+  sleep_cpu ();          // sleep
   sleep_disable ();      // precaution
 }
 
