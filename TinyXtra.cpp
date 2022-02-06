@@ -25,6 +25,7 @@ volatile bool TinyXtra::interrupt = false;
 TinyXtra::TinyXtra(){
   wdt_reset();  
   set_sleep_mode (SLEEP_MODE_PWR_DOWN);
+  serialTx = -1;
 }
 
 void TinyXtra::sleep() {
@@ -52,10 +53,10 @@ void TinyXtra::sleep_8s() {
 
 void TinyXtra::setupInterrupt(int i) {
   if ((i<0) || (5<i)) return;
-  GIMSK = 0b00100000;    // turns on pin change interrupts
-  // PCMSK = 0b00000001;    // turn on interrupts on PB0
-  PCMSK = 1<<i;
-  sei();                 // enables interrupts
+  cli();                // Disable interrupts during setup
+  PCMSK |= (1 << i);    // Enable interrupt handler (ISR) for our chosen interrupt pin (PCINT1/PB1/pin 6)
+  GIMSK |= (1 << PCIE); // Enable PCINT interrupt in the general interrupt mask
+  sei();                // last line of setup - enable interrupts after setup
 }
 
 void TinyXtra::disableAdc() {
@@ -82,7 +83,7 @@ void TinyXtra::dbgString(char *s) {
 
 void TinyXtra::dbgChar(char c) {
 //  const int txdel = TEXTRA_SERIAL_DELAY_MS;
-
+  if (serialTx < 0) return;
   digitalWrite(serialTx, LOW);
   delayMicroseconds(TINY_XTRA_SERIAL_DELAY_MS);
   for (byte mask = 0x01; mask; mask <<= 1)
